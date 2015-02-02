@@ -2,7 +2,7 @@ HELP_TEXT =<<HELP
 Usage:
 
 static new [project_name]
-  -- Build a new flatt project in a directory which matches your project name
+  -- Build a new project in a directory which matches your project name
 
 static generate [page|post|coffee|style]
   -- Generate CMS Sources files for a page, post, coffeescript or scss stylesheet
