@@ -1,6 +1,6 @@
 module Static
   module Generators
-    class Post < Base
+    class Entry < Base
     end
   end
 end

@@ -1,16 +1,14 @@
 #!/usr/bin/env ruby
 
-
 require 'static'
-require 'slop'
 require 'fileutils'
 
 CURRENT_DIRECTORY = Dir.pwd
 
 REQUIRED_DIRS = %w{
                     source source/pages
-                    source/posts source/scripts source/styles
-                    site site/pages site/posts site/js site/styles
+                    source/entries source/scripts source/styles
+                    site site/pages site/entries site/js site/styles
                     layouts
                   }
 
@@ -53,119 +51,59 @@ include Static::Generators
 include Static::Builders
 include Static::Renderers
 
-opts = Slop.parse do
-  banner "[Usage:] Static -h for more information."
+case ARGV[0]
 
-  on '-h', '--help', 'Print the Usage' do
-    #puts "'Ere I am, J. H., the ghost in the machine."
-    puts HELP_TEXT
+when 'new'
+  build_new_project ARGV[1]
+
+
+when 'generate' 
+  verify_static_root
+  paths = required_paths_hash
+  if ARGV[1].downcase == 'page'
+    # page_gen
+    puts "Enter page title: "
+    title = $stdin.gets.chomp
+
+    puts "Creating page '#{title}'"
+    page = Page.new(title, paths[:source][:pages])
+
+    puts "Building page....."
+    page.generate!
+    puts "done"
+  elsif ARGV[1].downcase == 'entry'
+    puts "Enter entry title: "
+    title = $stdin.gets.chomp
+    
+    puts "Creating entry '#{title}'"
+    entry = Entry.new(title, paths[:source][:entries])
+
+    puts "Building entry...."
+    entry.generate!
+    puts "Done"
+  elsif ARGV[1].downcase == 'coffee'
+    puts "Enter script title: "
+    title = $stdin.gets.chomp
+    script_title = string_to_file_path(title) + ".js.coffee" 
+    script_path = File.join(PATHS[:source][:scripts], script_title)
+  
+    puts "Creating empty coffee script..."
+    puts "\t -> #{script_path}"
+    FileUtils.touch(script_path)
+    puts "Done"
+  elsif ARGV[1].downcase =='style'
+    puts "Enter stylesheet title: "
+    title = $stdin.gets.chomp
+    stylesheet_title = string_to_file_path(title) + ".css.scss" 
+    stylesheet_path = File.join(PATHS[:source][:styles], stylesheet_title)
+    
+    puts "Creating empty scss stylesheet..."
+    puts "\t -> #{stylesheet_path}"
+    FileUtils.touch(stylesheet_path)
+    puts "Done"
   end
-
-  command 'new' do 
-    run do |opts, args|
-      name = args[0] || nil
-      if name
-        build_new_project name
-      else
-        puts HELP_TEXT
-      end
-    end
-  end
-
-  command 'generate' do 
-    run do |opts, args|
-      verify_static_root
-      gen_type = args[0] || nil
-      if gen_type && %w{ page post coffee style }.include?(gen_type)
-        paths = required_paths_hash
-        # generate ALL the things!
-        case gen_type
-        when 'page'
-          # page_gen
-          puts "Enter page title: "
-          title = $stdin.gets.chomp
-
-          puts "[+] Creating page '#{title}'"
-          page = Page.new(title, paths[:source][:pages])
-
-          puts "[+] Building page....."
-          page.generate!
-          puts "[+] done :)"
-        when 'post'
-          # post_gen
-          puts "Enter post title: "
-          title = $stdin.gets.chomp
-          
-          puts "[+] Creating post '#{title}'"
-          post = Post.new(title, paths[:source][:posts])
-
-          puts "[+] Building post...."
-          post.generate!
-          puts "[+] Done :)\n"
-        when 'coffee'
-          # post_gen
-          puts "Enter script title: "
-          title = $stdin.gets.chomp
-          script_title = string_to_file_path(title) + ".js.coffee" 
-          script_path = File.join(PATHS[:source][:scripts], script_title)
-          
-          puts "[+] Creating empty coffee script..."
-          puts "\t -> #{script_path}"
-
-          if File.exists? script_path
-            puts "[-] Script already exists. Exiting.\n"
-            exit
-          end
-
-          FileUtils.touch(script_path)
-          puts "[+] Done :)\n"
-        when 'style'
-          puts "Enter stylesheet title: "
-          title = $stdin.gets.chomp
-          stylesheet_title = string_to_file_path(title) + ".css.scss" 
-          stylesheet_path = File.join(PATHS[:source][:styles], stylesheet_title)
-          
-          puts "[+] Creating empty scss stylesheet..."
-          puts "\t -> #{stylesheet_path}"
-
-          if File.exists? stylesheet_path
-            puts "[-] Stylesheet already exists. Exiting.\n"
-            exit
-          end
-
-          FileUtils.touch(stylesheet_path)
-          puts "[+] Done :)\n"
-        end
-      else
-        puts HELP_TEXT
-      end
-    end
-  end
-   
-  command 'build' do 
-    run do |opts, args|
-      verify_static_root
-      build_type = args[0] || nil
-      if build_type && %w{ site html pages posts assets stylesheets js }.include?(build_type)
-        case build_type
-        when "site"
-          build_site
-        when "html"
-          build_html
-        when "pages"
-          build_pages
-        when "posts"
-          build_posts
-        when "assets"
-          build_assets
-        when "stylesheets"
-          build_stylesheets
-        when "js"
-          build_js 
-        end
-      else
-        puts HELP_TEXT
-      end
-    end 
-  end
+  
+when 'build'
+  verify_static_root
+  build_site
 end
