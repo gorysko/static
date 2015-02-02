@@ -4,9 +4,9 @@ Gem::Specification.new do |s|
   s.version     = '0.0.1'
   s.date        = '2015-02-02'
   s.summary     = "static pages"
-  s.description = "A simple static site generator"
-  s.authors     = ["datamart"]
-  s.email       = "datamart@sethq.com"
+  s.description = "bla bla bla"
+  s.authors     = ["ihor.lushchyk@sethq.com"]
+  s.email       = "ihor.lushchyk@sethq.com"
   s.files       = FileList[ 'bin/**/*', 'lib/**/*', '[A-Z]*' ].to_a
   s.homepage    = 'http://www.dtm.io/'
   s.license     = 'MIT'

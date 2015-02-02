@@ -104,7 +104,6 @@ module Static
       end
 
       def build_pages
-        # get a list of all pages in the pages source directory of the project
         sub_entries_of(PATHS[:source][:pages]).each do |directory|
           html = output_html_from(PATHS[:source][:pages], directory)
           target_dir = File.join(PATHS[:site][:pages], directory)

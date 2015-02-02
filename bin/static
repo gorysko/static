@@ -12,19 +12,14 @@ REQUIRED_DIRS = %w{
                     layouts
                   }
 
-# This is some frigteningly dark vooodoo which basically
-# just converts REQUIRED_DIRS into a nested hash of directories and paths
 def required_paths_hash
   output = REQUIRED_DIRS.inject({}) do |coll, path|
     nested_path = path.split "/"
     full_path = File.join(CURRENT_DIRECTORY,path)
 
-    # :C This could be written so much nicer...
-    # Must be getting sleepy
-    if nested_path.size == 1 # meaning it is a directory
+    if nested_path.size == 1
       coll[path.to_sym] = full_path
     else
-      # for readbility maybe?
       p0 = nested_path[0].to_sym
       p1 = nested_path[1].to_sym
       if coll[p0].class == String
@@ -32,10 +27,9 @@ def required_paths_hash
       end
       coll[p0][p1] = full_path
     end
-    coll # <3 inject() but should probably use each_with_object()
+    coll
   end
 
-  # keep pages @ site root >:C
   output[:site][:pages] = File.join(CURRENT_DIRECTORY,"site")
   return output
 end
@@ -56,7 +50,6 @@ case ARGV[0]
 when 'new'
   build_new_project ARGV[1]
 
-
 when 'generate' 
   verify_static_root
   paths = required_paths_hash
@@ -64,43 +57,25 @@ when 'generate'
     # page_gen
     puts "Enter page title: "
     title = $stdin.gets.chomp
-
-    puts "Creating page '#{title}'"
     page = Page.new(title, paths[:source][:pages])
-
-    puts "Building page....."
     page.generate!
-    puts "done"
   elsif ARGV[1].downcase == 'entry'
     puts "Enter entry title: "
     title = $stdin.gets.chomp
-    
-    puts "Creating entry '#{title}'"
     entry = Entry.new(title, paths[:source][:entries])
-
-    puts "Building entry...."
     entry.generate!
-    puts "Done"
   elsif ARGV[1].downcase == 'coffee'
     puts "Enter script title: "
     title = $stdin.gets.chomp
     script_title = string_to_file_path(title) + ".js.coffee" 
     script_path = File.join(PATHS[:source][:scripts], script_title)
-  
-    puts "Creating empty coffee script..."
-    puts "\t -> #{script_path}"
     FileUtils.touch(script_path)
-    puts "Done"
   elsif ARGV[1].downcase =='style'
     puts "Enter stylesheet title: "
     title = $stdin.gets.chomp
     stylesheet_title = string_to_file_path(title) + ".css.scss" 
     stylesheet_path = File.join(PATHS[:source][:styles], stylesheet_title)
-    
-    puts "Creating empty scss stylesheet..."
-    puts "\t -> #{stylesheet_path}"
     FileUtils.touch(stylesheet_path)
-    puts "Done"
   end
   
 when 'build'

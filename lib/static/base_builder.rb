@@ -15,14 +15,14 @@ module Static
       end
 
       def output_file_name
-        @template_file       # => /path/to/file.txt.erb
-          .split('/')[-1]    # => file.txt.erb
-          .split('.')[0..-2] # => ["file","txt"]
-          .join('.')         # => file.txt
+        @template_file       
+          .split('/')[-1]    
+          .split('.')[0..-2] 
+          .join('.')         
       end
 
       def render_template
-        raise StandardError, "No Rendering from Static::Builders:Base!\nCreate an inherited class and overwrite this method."
+        raise StandardError, "Error"
       end
     end
   end
