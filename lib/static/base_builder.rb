@@ -15,14 +15,14 @@ module Static
       end
 
       def output_file_name
-        @template_file       
-          .split('/')[-1]    
-          .split('.')[0..-2] 
-          .join('.')         
+        @template_file
+          .split('/')[-1]
+          .split('.')[0..-2]
+          .join('.')
       end
 
       def render_template
-        raise StandardError, "Error"
+        raise StandardError, 'Error'
       end
     end
   end

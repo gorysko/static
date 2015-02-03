@@ -13,9 +13,9 @@ REQUIRED_DIRS = %w{
                   }
 
 def required_paths_hash
-  output = REQUIRED_DIRS.inject({}) do |coll, path|
-    nested_path = path.split "/"
-    full_path = File.join(CURRENT_DIRECTORY,path)
+  output = REQUIRED_DIRS.each_with_object({}) do |coll, path|
+    nested_path = path.split '/'
+    full_path = File.join(CURRENT_DIRECTORY, path)
 
     if nested_path.size == 1
       coll[path.to_sym] = full_path
@@ -30,14 +30,14 @@ def required_paths_hash
     coll
   end
 
-  output[:site][:pages] = File.join(CURRENT_DIRECTORY,"site")
+  output[:site][:pages] = File.join(CURRENT_DIRECTORY, 'site')
   return output
 end
 
 PATHS = required_paths_hash
 
-require File.join(File.expand_path('..',__FILE__),'templates.rb')
-require File.join(File.expand_path('..',__FILE__),'helpers.rb')
+require File.join(File.expand_path('..', __FILE__), 'templates.rb')
+require File.join(File.expand_path('..', __FILE__), 'helpers.rb')
 
 include Static::Bin::Helpers
 
@@ -50,34 +50,34 @@ case ARGV[0]
 when 'new'
   build_new_project ARGV[1]
 
-when 'generate' 
+when 'generate'
   verify_static_root
   paths = required_paths_hash
   if ARGV[1].downcase == 'page'
     # page_gen
-    puts "Enter page title: "
+    puts 'Enter page title: '
     title = $stdin.gets.chomp
     page = Page.new(title, paths[:source][:pages])
     page.generate!
   elsif ARGV[1].downcase == 'entry'
-    puts "Enter entry title: "
+    puts 'Enter entry title: '
     title = $stdin.gets.chomp
     entry = Entry.new(title, paths[:source][:entries])
     entry.generate!
   elsif ARGV[1].downcase == 'coffee'
-    puts "Enter script title: "
+    puts 'Enter script title: '
     title = $stdin.gets.chomp
-    script_title = string_to_file_path(title) + ".js.coffee" 
+    script_title = string_to_file_path(title) + '.js.coffee'
     script_path = File.join(PATHS[:source][:scripts], script_title)
     FileUtils.touch(script_path)
-  elsif ARGV[1].downcase =='style'
-    puts "Enter stylesheet title: "
+  elsif ARGV[1].downcase == 'style'
+    puts 'Enter stylesheet title: '
     title = $stdin.gets.chomp
-    stylesheet_title = string_to_file_path(title) + ".css.scss" 
+    stylesheet_title = string_to_file_path(title) + '.css.scss'
     stylesheet_path = File.join(PATHS[:source][:styles], stylesheet_title)
     FileUtils.touch(stylesheet_path)
   end
-  
+
 when 'build'
   verify_static_root
   build_site

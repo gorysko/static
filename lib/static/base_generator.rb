@@ -1,6 +1,6 @@
 module Static
   module Generators
-    GENERATOR_TEMPLATE_DIR = File.expand_path "../templates", __FILE__
+    GENERATOR_TEMPLATE_DIR = File.expand_path '../templates', __FILE__
 
     class Base
       def initialize(title, source_directory)
@@ -16,7 +16,7 @@ module Static
       end
 
       def create_directory
-        unless Dir.exists? directory_path
+        unless Dir.exist? directory_path
           Dir.mkdir(directory_path)
         end
       end
@@ -30,11 +30,11 @@ module Static
       end
 
       def create_file_from_template(file, template)
-        unless Dir.exists? directory_path
+        unless Dir.exist? directory_path
           create_directory
         end
 
-        unless File.exists? file
+        unless File.exist? file
           File.write(file, @erb.render_from_file(template))
         end
       end
@@ -47,27 +47,27 @@ module Static
       end
 
       def content_template
-        File.join GENERATOR_TEMPLATE_DIR, "content.md.erb"
+        File.join GENERATOR_TEMPLATE_DIR, 'content.md.erb'
       end
 
       def meta_data_template
-        File.join GENERATOR_TEMPLATE_DIR, "meta.yml.erb"
+        File.join GENERATOR_TEMPLATE_DIR, 'meta.yml.erb'
       end
 
       def content_file
-        File.join directory_path, "content.md"
+        File.join directory_path, 'content.md'
       end
 
       def meta_data_file
-        File.join directory_path, "meta.yml"
+        File.join directory_path, 'meta.yml'
       end
 
       def directory_path
-       File.join @source_directory, directory_name
+        File.join @source_directory, directory_name
       end
 
       def directory_name
-       "#{date_string}_#{sanitize_name(@title)}"
+        '#{date_string}_#{sanitize_name(@title)}'
       end
 
       def date_string
@@ -75,10 +75,10 @@ module Static
       end
 
       def sanitize_name(name)
-       name.downcase
-           .split(' ')
-           .join('_')
-           .gsub(/[^a-z0-9_\-]/,'')[0..63]
+        name.downcase
+          .split(' ')
+          .join('_')
+          .gsub(/[^a-z0-9_\-]/, '')[0..63]
       end
     end
   end
